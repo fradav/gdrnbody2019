@@ -26,9 +26,9 @@
 \usepackage{multicol}
 \usepackage{natbib}
 \usepackage{tcolorbox}
+\usepackage{hyperref}
 
-
-\renewcommand{\bibpreamble}{\begin{multicols}{2}}
+\renewcommand{\bibpreamble}{\setlength{\columnsep}{30pt}\begin{multicols}{3}}
 \renewcommand{\bibpostamble}{\end{multicols}}
 
 \usetikzlibrary{calc,fit,shapes.arrows,positioning}
@@ -66,7 +66,20 @@
 % Title
 % ====================
 
-\title{AbcRanger: a fast and scalable random forest library for ABC model choice and parameter estimation}
+\newcommand\textbox[1]{%
+  \parbox{.333\textwidth}{#1}%
+}
+
+\title{
+  \noindent
+\makebox[0pt][l]{}%
+\makebox[\textwidth][c]{AbcRanger}%
+\makebox[0pt][r]{\raisebox{1.5ex}{\footnotesize{Code and binaries available at \url{http://github.com/diyabc/abcranger}\hspace{2cm}}}}\\
+\LARGE{A fast and scalable random forest library for ABC model choice and parameter estimation}
+}
+% \title{\RaggedLeft \footnotesize{Code and binaries available at \url{http://github.com/diyabc/abcranger}}\\
+% \Centering \Huge{AbcRanger}\\
+%  \LARGE{A fast and scalable random forest library for ABC model choice and parameter estimation}}
 
 \author{F.-D. Collin \inst{2} A. Estoup \inst{1} J.-M. Marin \inst{2} L. Raynal \inst{2} }
 
@@ -97,7 +110,7 @@
       \caption{ABC details}
     \end{figure}
 
-    Given an observed data, the basic idea of ABC (\emph{Approximate Bayesian Computations}) is to approximate the likelihood of a parametrized model with selected simulations, by comparing the observed data and simulated ones via computed \emph{summary statistics}. The table of summary statistics for simulated data is called \realemph{the reference table}.
+    Given an observed data, the basic idea of ABC, \emph{Approximate Bayesian Computations} \cite{marin2012approximate}, is to approximate the likelihood of a parametrized model with selected simulations, by comparing the observed data and simulated ones via computed \emph{summary statistics}. The table of summary statistics for simulated data is called \realemph{the reference table}.
   
   \end{block}
   
@@ -136,7 +149,7 @@
 
   \begin{block}{Second building block : Random Forests}
     \begin{block}{CART}
-      Random Forests are based on a CART (\emph{Classification and Regression Trees}) algorithm.
+      Random Forests are based on a CART, \emph{Classification and Regression Trees}, algorithm \cite{breiman:etal:1984}.
 
       \begin{wrapfigure}{l}{0.7\textwidth}
         \begin{center}
@@ -272,20 +285,19 @@
     
   \end{alertblock}
   \begin{block}{A new implementation of Random Forest for ABC}
-    Since ABC procedures only use trained Random Forests on a known set of observations, we have altered the random forest training computation by using only a subset of in-memory trees at a time and accumulating the required outcomes (predictions and statistics)
+    Since ABC procedures only use trained Random Forests on a known set of observations, we have altered the random forest training computation by using only a subset of in-memory trees at a time and accumulating the required outcomes (predictions and statistics). Memory footprint is vastly improved and there is no performance cost.
 
     \begin{figure}[ht]
       \centering
       \includesvg[width=35cm]{RF-optim}
       \caption{Window of growing trees}
     \end{figure}
-  \end{block}
 
-  \begin{block}{References}
-    \nocite{*}
-    \footnotesize{\bibliographystyle{plain}\bibliography{poster}}
+    \justifying Ongoing project \realemph{LeafLitter} intends to pursue that line even further: for a growing tree, only encountered leaves are stored. Thus, the memory footprint of trees becomes negligible, and could be parallelized at full scale.
 
   \end{block}
+
+  
 
 \end{column}
 
@@ -293,6 +305,12 @@
 \end{columns}
 
 
+
+\begin{block}{\justifying References}
+  \nocite{*}
+  \footnotesize{\bibliographystyle{unsrt}\bibliography{poster}}
+
+\end{block}
 
 
 
