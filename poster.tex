@@ -9,14 +9,33 @@
 
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
-\usepackage[size=custom,width=120,height=72,scale=1.0]{beamerposter}
+\usepackage[orientation=portrait,size=a0,scale=1.0]{beamerposter}
 \usetheme{gemini}
 \usecolortheme{gemini}
 \usepackage{graphicx}
+\usepackage{svg}
 \usepackage{booktabs}
 \usepackage{tikz}
 \usepackage{pgfplots}
+\usepackage{pifont}
+\usepackage{tcolorbox}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{forest}
+\usepackage{wrapfig}
+\usepackage{multicol}
+\usepackage{natbib}
+\usepackage{tcolorbox}
 
+
+\renewcommand{\bibpreamble}{\begin{multicols}{2}}
+\renewcommand{\bibpostamble}{\end{multicols}}
+
+\usetikzlibrary{calc,fit,shapes.arrows,positioning}
+\usetikzlibrary{graphs}
+\usetikzlibrary{graphdrawing}
+\usetikzlibrary{trees,matrix}
+\usegdlibrary{trees}
 % ====================
 % Lengths
 % ====================
@@ -25,20 +44,37 @@
 % (N+1)*\sepwidth + N*\colwidth = \paperwidth
 \newlength{\sepwidth}
 \newlength{\colwidth}
-\setlength{\sepwidth}{0.025\paperwidth}
-\setlength{\colwidth}{0.3\paperwidth}
+\setlength{\sepwidth}{0.0333\paperwidth}
+\setlength{\colwidth}{0.4\paperwidth}
 
 \newcommand{\separatorcolumn}{\begin{column}{\sepwidth}\end{column}}
+\pgfplotsset{compat=1.16}
+
+\colorlet{darkyellow}{yellow!60!black}
+\colorlet{lightblue}{blue!65}
+\colorlet{darkred}{red!60!black}
+
+\definecolor{mycolor}{rgb}{0.122, 0.435, 0.698}
+
+\newtcbox{\mybox}{on line,
+  colframe=mycolor,colback=mycolor!10!white,arc=4pt,boxsep=0pt,left=6pt,right=6pt,boxrule=0pt,top=6pt,bottom=6pt}
+
+% \renewcommand{\emph}[1]{\mybox{\emph{#1}}}
+\newcommand{\realemph}[1]{\mybox{\textit{#1}}}
 
 % ====================
 % Title
 % ====================
 
-\title{Some fancy title: followed by some more text}
+\title{AbcRanger: a fast and scalable random forest library for ABC model choice and parameter estimation}
 
-\author{Alyssa P. Hacker \inst{1} \and Ben Bitdiddle \inst{2} \and Lem E. Tweakit \inst{2}}
+\author{F.-D. Collin \inst{2} A. Estoup \inst{1} J.-M. Marin \inst{2} L. Raynal \inst{2} }
 
-\institute[shortinst]{\inst{1} Some Institute \samelineand \inst{2} Another Institute}
+\institute[shortinst]{\inst{1} CBGP, INRA, CIRAD, IRD, Montpellier SupAgro, Univ. Montpellier \samelineand \inst{2} Université de Montpellier, CNRS, IMAG UMR 5149}
+
+% \author{Alyssa P. Hacker \inst{1} \and Ben Bitdiddle \inst{2} \and Lem E. Tweakit \inst{2}}
+
+% \institute[shortinst]{\inst{1} Some Institute \samelineand \inst{2} Another Institute}
 
 % ====================
 % Body
@@ -47,239 +83,205 @@
 \begin{document}
 
 \begin{frame}[t]
+
+
 \begin{columns}[t]
 \separatorcolumn
 
 \begin{column}{\colwidth}
 
-  \begin{block}{A block title}
+  \begin{block}{First building block : ABC simulations}
+    \begin{figure}
+      \centering
+        \includesvg[width=35cm]{abc-explication}
+      \caption{ABC details}
+    \end{figure}
 
-    Some block contents, followed by a diagram, followed by a dummy paragraph.
+    Given an observed data, the basic idea of ABC (\emph{Approximate Bayesian Computations}) is to approximate the likelihood of a parametrized model with selected simulations, by comparing the observed data and simulated ones via computed \emph{summary statistics}. The table of summary statistics for simulated data is called \realemph{the reference table}.
+  
+  \end{block}
+  
+  \begin{block}{ABC posterior methodologies}
+    \begin{description}
+      \item[\color{darkred}\sffamily \textbf{Model choice:}] Simulate data for several models and \emph{choose the best model to fit our data}
+      \item[\color{darkred}\sffamily \textbf{Parameter estimation:}] Simulate data for one model and \emph{infer one or several parameters for this model given the observed data}
+    \end{description}
+
+    A sensible workflow is to first choose a model and then infer its parameters.
 
     \begin{figure}
       \centering
-      \begin{tikzpicture}[scale=6]
-        \draw[step=0.25cm,color=gray] (-1,-1) grid (1,1);
-        \draw (1,0) -- (0.2,0.2) -- (0,1) -- (-0.2,0.2) -- (-1,0)
-          -- (-0.2,-0.2) -- (0,-1) -- (0.2,-0.2) -- cycle;
-      \end{tikzpicture}
-      \caption{A figure caption.}
+        \includesvg[width=35cm]{methodologies}
+      \caption{ABC workflow with AbcRanger}
     \end{figure}
 
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ultricies
-    eget libero ac ullamcorper. Integer et euismod ante. Aenean vestibulum
-    lobortis augue, ut lobortis turpis rhoncus sed. Proin feugiat nibh a
-    lacinia dignissim. Proin scelerisque, risus eget tempor fermentum, ex
-    turpis condimentum urna, quis malesuada sapien arcu eu purus.
-
   \end{block}
-
-  \begin{block}{A block containing a list}
-
-    Nam vulputate nunc felis, non condimentum lacus porta ultrices. Nullam sed
-    sagittis metus. Etiam consectetur gravida urna quis suscipit.
-
-    \begin{itemize}
-      \item \textbf{Mauris tempor} risus nulla, sed ornare
-      \item \textbf{Libero tincidunt} a duis congue vitae
-      \item \textbf{Dui ac pretium} morbi justo neque, ullamcorper
-    \end{itemize}
-
-    Eget augue porta, bibendum venenatis tortor.
-
-  \end{block}
-
-  \begin{alertblock}{A highlighted block}
-
-    This block catches your eye, so \textbf{important stuff} should probably go
-    here.
-
-    Curabitur eu libero vehicula, cursus est fringilla, luctus est. Morbi
-    consectetur mauris quam, at finibus elit auctor ac. Aliquam erat volutpat.
-    Aenean at nisl ut ex ullamcorper eleifend et eu augue. Aenean quis velit
-    tristique odio convallis ultrices a ac odio.
-
-    \begin{itemize}
-      \item \textbf{Fusce dapibus tellus} vel tellus semper finibus. In
-        consequat, nibh sed mattis luctus, augue diam fermentum lectus.
-      \item \textbf{In euismod erat metus} non ex. Vestibulum luctus augue in
-        mi condimentum, at sollicitudin lorem viverra.
-      \item \textbf{Suspendisse vulputate} mauris vel placerat consectetur.
-        Mauris semper, purus ac hendrerit molestie, elit mi dignissim odio, in
-        suscipit felis sapien vel ex.
-    \end{itemize}
-
-    Aenean tincidunt risus eros, at gravida lorem sagittis vel. Vestibulum ante
-    ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae.
-
+  
+  \begin{alertblock}{Challenges of ABC}
+    in the context of population genetics recent advances
+    \begin{description}
+      \item[\color{darkyellow}\sffamily \textbf{Number of simulated data :}] could be > 100 000
+      \item[\color{darkyellow}\sffamily \textbf{Number of summary statistics :}] could range from several hundred to tens of thousands (scenario with several populations and combinatory "explosion") : how to select the \emph{\color{darkred} meaningful} ones?
+    \end{description}
+    Classical Methods for ABC ($k$-nn and local methods) doesn't cope very well with this situation.
   \end{alertblock}
-
+\begin{block}{Our solution}
+  \cite{pudlo2015reliable} and \cite{raynal2016abc} proposed a novel approach, relying on \emph{Random Forests} to provide both model choice and parameter estimation methodologies
+\end{block}
 \end{column}
 
 \separatorcolumn
 
 \begin{column}{\colwidth}
 
-  \begin{block}{A block containing an enumerated list}
+  \begin{block}{Second building block : Random Forests}
+    \begin{block}{CART}
+      Random Forests are based on a CART (\emph{Classification and Regression Trees}) algorithm.
 
-    Vivamus congue volutpat elit non semper. Praesent molestie nec erat ac
-    interdum. In quis suscipit erat. \textbf{Phasellus mauris felis, molestie
-    ac pharetra quis}, tempus nec ante. Donec finibus ante vel purus mollis
-    fermentum. Sed felis mi, pharetra eget nibh a, feugiat eleifend dolor. Nam
-    mollis condimentum purus quis sodales. Nullam eu felis eu nulla eleifend
-    bibendum nec eu lorem. Vivamus felis velit, volutpat ut facilisis ac,
-    commodo in metus.
+      \begin{wrapfigure}{l}{0.7\textwidth}
+        \begin{center}
+        \begin{tikzpicture}[scale=1.0, every node/.style={scale=1, minimum height=0.8cm}, thick]
+            \useasboundingbox (-1,-1) rectangle (11.5,11);
+            %\draw[very thin, gray] (0,0) grid[step=1] (10,10);
+            
+            \coordinate (c1) at (0,0);
+            \coordinate (c2) at (0,10);
+            \coordinate (c3) at (10,10);
+            \coordinate (c4) at (10,0);
+        
+            \coordinate (X1) at (5,0);
+            \coordinate (X2) at (0,5);
+        
+            \coordinate (cut1) at ($ (c1) + (0,4) $);
+            \coordinate (cut1_bis) at ($ (c4) + (0,4) $);
+        
+            \coordinate (cut2) at ($ (c1) + (6,0) $);
+            \coordinate (cut2_bis) at ($ (cut1) + (6,0) $);
+        
+            \coordinate (cut3) at ($ (cut1) + (3,0) $);
+            \coordinate (cut3_bis) at ($ (c2) + (3,0) $);
+            
+            \coordinate (cut4) at ($ (cut3) + (0,4) $);
+            \coordinate (cut4_bis) at ($ (cut1_bis) + (0,4) $);
+        
+            \coordinate (ret1) at (3,2);
+            \coordinate (ret2) at (8,2);
+            \coordinate (ret3) at (1.5,7);
+            \coordinate (ret4) at (6.5,6);
+            \coordinate (ret5) at (6.5,9);
+        
+            \coordinate (s1) at (0,4);
+            \coordinate (s2) at (6,0);
+            \coordinate (s3) at (3,0);
+            \coordinate (s4) at (0,8);
+        
+            \draw (c1) -- (c2) -- (c3) -- (c4) -- (c1);
+            \draw [color=lightblue,line width=1mm] (cut1) -- (cut1_bis);
+            \draw [color=darkyellow,line width=1mm] (cut2) -- (cut2_bis);
+            \draw [color=green!80!black,line width=1mm]  (cut3) -- (cut3_bis);
+            \draw [color=red,line width=1mm] (cut4) -- (cut4_bis);
+        
+            \draw (ret1) node {$\hat{y}_1$};
+            \draw (ret2) node {$\hat{y}_2$};
+            \draw (ret3) node {$\hat{y}_3$};
+            \draw (ret4) node {$\hat{y}_4$};
+            \draw (ret5) node {$\hat{y}_5$};
+        
+            \draw [color=lightblue] (s1) node[left] {$s_1$};
+            \draw [color=darkyellow] (s2) node[below] {$s_2$};
+            \draw [color=green!80!black] (s3) node[below] {$s_3$};
+            \draw [color=red] (s4) node[left] {$s_4$};
+            
+            \draw (s1) -- ++(-0.15,0);
+            \draw (s2) -- ++(0,-0.15);
+            \draw (s3) -- ++(0,-0.15);
+            \draw (s4) -- ++(-0.15,0);
+            
+            \draw (X1) node[below, minimum height = 2.5cm] {$X_1$};
+            \draw (X2) node[left, minimum width = 2.5cm] {$X_2$};
+        
+        \end{tikzpicture}%
+        \begin{tikzpicture}[scale=1.5,
+                edge from parent/.style={draw, thick, edge from parent path=
+                {(\tikzparentnode.south)--+(0,-1.5pt)-| (\tikzchildnode)}},
+                noeud/.style ={minimum size=1.2em, inner sep=4pt},
+                level 1/.style={sibling distance=3cm},
+                level 2/.style={sibling distance=2cm}]
+                \tikzset{level distance=65pt}
+                  \node [noeud,color=lightblue] {$X_2 \leq s_1$}
+                    child {node [noeud,color=darkyellow] {$X_1 \leq s_2$} 
+                        child {node [noeud] {$\hat{y}_1$} }
+                        child {node [noeud] {$\hat{y}_2$} }
+                    }
+                    child {node [noeud,color=green!80!black] {$X_1 \leq s_3$} 
+                        child {node [noeud] {$\hat{y}_3$} }
+                        child {node [noeud,color=red] {$X_2 \leq s_4$} 
+                            child {node [noeud] {$\hat{y}_4$} }
+                            child {node [noeud] {$\hat{y}_5$} }
+                        }
+                    };
+                \end{tikzpicture}
+        \end{center}
+        \caption{An example of CART and the associated partition of the two dimensional predictor space. Each splitting condition takes the form $X_j \leq s$ and the prediction at a leaf is denoted $\hat{y}_\ell$.}
+        \label{chap2:fig:CART-tree}
+        \end{wrapfigure}
 
-    \begin{enumerate}
-      \item \textbf{Morbi mauris purus}, egestas at vehicula et, convallis
-        accumsan orci. Orci varius natoque penatibus et magnis dis parturient
-        montes, nascetur ridiculus mus.
-      \item \textbf{Cras vehicula blandit urna ut maximus}. Aliquam blandit nec
-        massa ac sollicitudin. Curabitur cursus, metus nec imperdiet bibendum,
-        velit lectus faucibus dolor, quis gravida metus mauris gravida turpis.
-      \item \textbf{Vestibulum et massa diam}. Phasellus fermentum augue non
-        nulla accumsan, non rhoncus lectus condimentum.
-    \end{enumerate}
+        A CART is a \emph{machine learning algorithm} whose principle is to partition the predictor space into disjoint subspaces, in an iterative manner, and each one is assigned a prediction value which will be used for test data falling in this subspace.\\
 
-  \end{block}
+        Once the partitioning is done, we have a binary tree structure which could predict outcomes from an input data, either classes or continuous values.
 
-  \begin{block}{Fusce aliquam magna velit}
+      \end{block}
 
-    Et rutrum ex euismod vel. Pellentesque ultricies, velit in fermentum
-    vestibulum, lectus nisi pretium nibh, sit amet aliquam lectus augue vel
-    velit. Suspendisse rhoncus massa porttitor augue feugiat molestie. Sed
-    molestie ut orci nec malesuada. Sed ultricies feugiat est fringilla
-    posuere.
+    \begin{block}{Random Forests}
 
-    \begin{figure}
-      \centering
-      \begin{tikzpicture}
-        \begin{axis}[
-            scale only axis,
-            no markers,
-            domain=0:2*pi,
-            samples=100,
-            axis lines=center,
-            axis line style={-},
-            ticks=none]
-          \addplot[red] {sin(deg(x))};
-          \addplot[blue] {cos(deg(x))};
-        \end{axis}
-      \end{tikzpicture}
-      \caption{Another figure caption.}
-    \end{figure}
+      \begin{figure}[ht]
+        \centering
+          \includesvg[width=35cm]{RF}
+      \caption{Random Forest}
+      \end{figure}
 
-  \end{block}
-
-  \begin{block}{Nam cursus consequat egestas}
-
-    Nulla eget sem quam. Ut aliquam volutpat nisi vestibulum convallis. Nunc a
-    lectus et eros facilisis hendrerit eu non urna. Interdum et malesuada fames
-    ac ante \textit{ipsum primis} in faucibus. Etiam sit amet velit eget sem
-    euismod tristique. Praesent enim erat, porta vel mattis sed, pharetra sed
-    ipsum. Morbi commodo condimentum massa, \textit{tempus venenatis} massa
-    hendrerit quis. Maecenas sed porta est. Praesent mollis interdum lectus,
-    sit amet sollicitudin risus tincidunt non.
-
-    Etiam sit amet tempus lorem, aliquet condimentum velit. Donec et nibh
-    consequat, sagittis ex eget, dictum orci. Etiam quis semper ante. Ut eu
-    mauris purus. Proin nec consectetur ligula. Mauris pretium molestie
-    ullamcorper. Integer nisi neque, aliquet et odio non, sagittis porta justo.
-
-    \begin{itemize}
-      \item \textbf{Sed consequat} id ante vel efficitur. Praesent congue massa
-        sed est scelerisque, elementum mollis augue iaculis.
+      \begin{multicols}{2}
+        \textbf{Random Forests \cite{breiman:2001} are a three pronged extension of CART:}
         \begin{itemize}
-          \item In sed est finibus, vulputate
-            nunc gravida, pulvinar lorem. In maximus nunc dolor, sed auctor eros
-            porttitor quis.
-          \item Fusce ornare dignissim nisi. Nam sit amet risus vel lacus
-            tempor tincidunt eu a arcu.
-          \item Donec rhoncus vestibulum erat, quis aliquam leo
-            gravida egestas.
+          \item[\textbf{Ensemble method}] Training a \emph{set} of CART (not just one), and getting the majority vote (resp. mean) for classification (resp. regression)
+          \item[\textbf{Bootstrapping}] Training data is random sampled (with replacement) for \emph{each} tree
+          \item[\textbf{Feature bagging}] At each node of a growing tree, find the best split on a random subset of the features 
         \end{itemize}
-      \item \textbf{Sed luctus, elit sit amet} dictum maximus, diam dolor
-        faucibus purus, sed lobortis justo erat id turpis.
-      \item \textbf{Pellentesque facilisis dolor in leo} bibendum congue.
-        Maecenas congue finibus justo, vitae eleifend urna facilisis at.
-    \end{itemize}
+        \columnbreak
+         \centering
+        \textbf{Advantages in an ABC setting : }
+        \justify
+        \begin{itemize}
+          \item robust to noise
+          \item (almost) free variable importance
+          \item free (out-of-bag) cross-validation procedure
+          \item easy parallelization
+          \item good scaling properties on number of samples and on number of features (summary statistics)
+          \item classifier and regressor
+        \end{itemize}  
+          
+      \end{multicols}
 
+
+    \end{block}
   \end{block}
 
-\end{column}
+  \begin{alertblock}{Computational challenges with ABC/Random Forests}
 
-\separatorcolumn
+    With ~100 000 lines and more than 10 000 summary statistics, each tree could reach over 1 gigabyte of memory size. Typically we need 500 or 1000 trees for good prediction performance, so, even with state of the art RF packages like \cite{wright2015ranger}, memory constraints are preventing completion of the training.
+    
+  \end{alertblock}
+  \begin{block}{A new implementation of Random Forest for ABC}
+    Since ABC procedures only use trained Random Forests on a known set of observations, we have altered the random forest training computation by using only a subset of in-memory trees at a time and accumulating the required outcomes (predictions and statistics)
 
-\begin{column}{\colwidth}
-
-  \begin{block}{A block containing some math}
-
-    Nullam non est elit. In eu ornare justo. Maecenas porttitor sodales lacus,
-    ut cursus augue sodales ac.
-
-    $$
-    \int_{-\infty}^{\infty} e^{-x^2}\,dx = \sqrt{\pi}
-    $$
-
-    Interdum et malesuada fames $\{1, 4, 9, \ldots\}$ ac ante ipsum primis in
-    faucibus. Cras eleifend dolor eu nulla suscipit suscipit. Sed lobortis non
-    felis id vulputate.
-
-    \heading{A heading inside a block}
-
-    Praesent consectetur mi $x^2 + y^2$ metus, nec vestibulum justo viverra
-    nec. Proin eget nulla pretium, egestas magna aliquam, mollis neque. Vivamus
-    dictum $\mathbf{u}^\intercal\mathbf{v}$ sagittis odio, vel porta erat
-    congue sed. Maecenas ut dolor quis arcu auctor porttitor.
-
-    \heading{Another heading inside a block}
-
-    Sed augue erat, scelerisque a purus ultricies, placerat porttitor neque.
-    Donec $P(y \mid x)$ fermentum consectetur $\nabla_x P(y \mid x)$ sapien
-    sagittis egestas. Duis eget leo euismod nunc viverra imperdiet nec id
-    justo.
-
-  \end{block}
-
-  \begin{block}{Nullam vel erat at velit convallis laoreet}
-
-    Class aptent taciti sociosqu ad litora torquent per conubia nostra, per
-    inceptos himenaeos. Phasellus libero enim, gravida sed erat sit amet,
-    scelerisque congue diam. Fusce dapibus dui ut augue pulvinar iaculis.
-
-    \begin{table}
+    \begin{figure}[ht]
       \centering
-      \begin{tabular}{l r r c}
-        \toprule
-        \textbf{First column} & \textbf{Second column} & \textbf{Third column} & \textbf{Fourth} \\
-        \midrule
-        Foo & 13.37 & 384,394 & $\alpha$ \\
-        Bar & 2.17 & 1,392 & $\beta$ \\
-        Baz & 3.14 & 83,742 & $\delta$ \\
-        Qux & 7.59 & 974 & $\gamma$ \\
-        \bottomrule
-      \end{tabular}
-      \caption{A table caption.}
-    \end{table}
-
-    Donec quis posuere ligula. Nunc feugiat elit a mi malesuada consequat. Sed
-    imperdiet augue ac nibh aliquet tristique. Aenean eu tortor vulputate,
-    eleifend lorem in, dictum urna. Proin auctor ante in augue tincidunt
-    tempor. Proin pellentesque vulputate odio, ac gravida nulla posuere
-    efficitur. Aenean at velit vel dolor blandit molestie. Mauris laoreet
-    commodo quam, non luctus nibh ullamcorper in. Class aptent taciti sociosqu
-    ad litora torquent per conubia nostra, per inceptos himenaeos.
-
-    Nulla varius finibus volutpat. Mauris molestie lorem tincidunt, iaculis
-    libero at, gravida ante. Phasellus at felis eu neque suscipit suscipit.
-    Integer ullamcorper, dui nec pretium ornare, urna dolor consequat libero,
-    in feugiat elit lorem euismod lacus. Pellentesque sit amet dolor mollis,
-    auctor urna non, tempus sem.
-
+      \includesvg[width=35cm]{RF-optim}
+      \caption{Window of growing trees}
+    \end{figure}
   \end{block}
 
   \begin{block}{References}
-
     \nocite{*}
     \footnotesize{\bibliographystyle{plain}\bibliography{poster}}
 
@@ -289,6 +291,11 @@
 
 \separatorcolumn
 \end{columns}
+
+
+
+
+
 \end{frame}
 
 \end{document}

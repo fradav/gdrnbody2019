@@ -1,5 +1,5 @@
 # output
-*.pdf
+# *.pdf
 
 # intermediate files
 *.aux
@@ -10,3 +10,10 @@
 *.out
 *.snm
 *.toc
+*.fls
+.ionide
+.vscode
+svg-inkscape
+*.fdb_latexmk
+__latexindent_temp.tex
+*.synctex.gz
