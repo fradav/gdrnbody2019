@@ -7,35 +7,28 @@
 % Packages
 % ====================
 
+
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage[orientation=portrait,size=a0,scale=1.0]{beamerposter}
 \usetheme{gemini}
 \usecolortheme{gemini}
-\usepackage{graphicx}
-\usepackage{svg}
-\usepackage{booktabs}
-\usepackage{tikz}
-\usepackage{pgfplots}
-\usepackage{pifont}
-\usepackage{tcolorbox}
-\usepackage{booktabs}
-\usepackage{xcolor}
-\usepackage{forest}
+\usepackage{amsmath}
 \usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{booktabs}
 \usepackage{multicol}
 \usepackage{natbib}
-\usepackage{tcolorbox}
 \usepackage{hyperref}
+\usepackage{neuralnetwork}
 
 \renewcommand{\bibpreamble}{\setlength{\columnsep}{30pt}\begin{multicols}{3}}
 \renewcommand{\bibpostamble}{\end{multicols}}
 
-\usetikzlibrary{calc,fit,shapes.arrows,positioning}
-\usetikzlibrary{graphs}
-\usetikzlibrary{graphdrawing}
-\usetikzlibrary{trees,matrix}
-\usegdlibrary{trees}
+\newcommand{\x}[2]{$x_{2}$}
+\newcommand{\y}[2]{$\hat{y}_{2}$}
+\newcommand{\hlayer}[2]{\small $h^{(#1)}_#2$}
+
 % ====================
 % Lengths
 % ====================
@@ -48,42 +41,25 @@
 \setlength{\colwidth}{0.4\paperwidth}
 
 \newcommand{\separatorcolumn}{\begin{column}{\sepwidth}\end{column}}
-\pgfplotsset{compat=1.16}
-
-\colorlet{darkyellow}{yellow!60!black}
-\colorlet{lightblue}{blue!65}
-\colorlet{darkred}{red!60!black}
-
-\definecolor{mycolor}{rgb}{0.122, 0.435, 0.698}
-
-\newtcbox{\mybox}{on line,
-  colframe=mycolor,colback=mycolor!10!white,arc=4pt,boxsep=0pt,left=6pt,right=6pt,boxrule=0pt,top=6pt,bottom=6pt}
-
-% \renewcommand{\emph}[1]{\mybox{\emph{#1}}}
-\newcommand{\realemph}[1]{\mybox{\textit{#1}}}
 
 % ====================
 % Title
 % ====================
 
-\newcommand\textbox[1]{%
-  \parbox{.333\textwidth}{#1}%
-}
-
 \title{
   \noindent
 \makebox[0pt][l]{}%
-\makebox[\textwidth][c]{AbcRanger}%
-\makebox[0pt][r]{\raisebox{1.5ex}{\footnotesize{Code and binaries available at \url{http://github.com/diyabc/abcranger}\hspace{2cm}}}}\\
-\LARGE{A fast and scalable random forest library for ABC model choice and parameter estimation}
+\makebox[\textwidth][c]{Deep Learning and quantum many-body problem}\\%
+% \makebox[0pt][r]{\raisebox{1.5ex}{\footnotesize{Code and binaries available at \url{http://github.com/diyabc/abcranger}\hspace{2cm}}}}\\
+\LARGE{Further opening the black box of Deep Learning via quantum many-body problem, survey and perspectives}
 }
 % \title{\RaggedLeft \footnotesize{Code and binaries available at \url{http://github.com/diyabc/abcranger}}\\
 % \Centering \Huge{AbcRanger}\\
 %  \LARGE{A fast and scalable random forest library for ABC model choice and parameter estimation}}
 
-\author{F.-D. Collin \inst{2} A. Estoup \inst{1} J.-M. Marin \inst{2} L. Raynal \inst{2} }
+\author{F.-D. Collin \inst{1}}
 
-\institute[shortinst]{\inst{1} CBGP, INRA, CIRAD, IRD, Montpellier SupAgro, Univ. Montpellier \samelineand \inst{2} Université de Montpellier, CNRS, IMAG UMR 5149}
+\institute[shortinst]{\inst{1} Université de Montpellier, CNRS, IMAG UMR 5149}
 
 % \author{Alyssa P. Hacker \inst{1} \and Ben Bitdiddle \inst{2} \and Lem E. Tweakit \inst{2}}
 
@@ -98,217 +74,70 @@
 \begin{frame}[t]
 
 
-\begin{columns}[t]
-\separatorcolumn
+  \begin{columns}[t]
+    \separatorcolumn
 
-\begin{column}{\colwidth}
+    \begin{column}{\colwidth}
 
-  \begin{block}{First building block : ABC simulations}
-    \begin{figure}
-      \centering
-        \includesvg[width=35cm]{abc-explication}
-      \caption{ABC details}
-    \end{figure}
+      \begin{block}{Generalities on Deep Learning}
+        \begin{figure}[ht]
+          \resizebox{\columnwidth}{!}{%
+%          \begin{neuralnetwork}[height=3pt,layertitleheight=60pt,layerspacing=200pt,nodespacing=50pt,nodesize=30pt]
+            \begin{neuralnetwork}[height=4,layertitleheight=60pt,layerspacing=200pt,nodespacing=50pt,nodesize=40pt]
+            \inputlayer[count=3, bias=true, title=Input layer, text=\x]
+            \hiddenlayer[count=3, bias=false, title=Hidden layer 1, text=\hlayer] \linklayers
+            \hiddenlayer[count=4, bias=false, title=Hidden layer 2, text=\hlayer] \linklayers
+            \hiddenlayer[count=3, bias=false, title=Hidden layer 3, text=\hlayer] \linklayers
+            \outputlayer[count=2, title=Output layer, text=\y] \linklayers
+        \end{neuralnetwork}
+          }
+          \caption{Example of a \emph{feedforward} neural network. Each layer is a tensor operation taking $f_i$ the previous layer output tensor as input. The final function $f(\boldsymbol{x})=f^{(3)}\left(f^{(2)}\left(f^{(1)}(\boldsymbol{x})\right)\right)$ is the composition of the tensor operations.}
+        \end{figure}
 
-    Given an observed data, the basic idea of ABC, \emph{Approximate Bayesian Computations} \cite{marin2012approximate}, is to approximate the likelihood of a parametrized model with selected simulations, by comparing the observed data and simulated ones via computed \emph{summary statistics}. The table of summary statistics for simulated data is called \realemph{the reference table}.
-  
-  \end{block}
-  
-  \begin{block}{ABC posterior methodologies}
-    \begin{description}
-      \item[\color{darkred}\sffamily \textbf{Model choice:}] Simulate data for several models and \emph{choose the best model to fit our data}
-      \item[\color{darkred}\sffamily \textbf{Parameter estimation:}] Simulate data for one model and \emph{infer one or several parameters for this model given the observed data}
-    \end{description}
+        \cite{goodfellow2016deep} illustrates this.
+      \end{block}
 
-    A sensible workflow is to first choose a model and then infer its parameters.
 
-    \begin{figure}
-      \centering
-        \includesvg[width=35cm]{methodologies}
-      \caption{ABC workflow with AbcRanger}
-    \end{figure}
+      \begin{block}{Tensor Networks on nbody quantum problem}
 
-  \end{block}
-  
-  \begin{alertblock}{Challenges of ABC}
-    In the context of population genetics recent advances
-    \begin{description}
-      \item[\color{darkyellow}\sffamily \textbf{Number of simulated data :}] could be > 100 000
-      \item[\color{darkyellow}\sffamily \textbf{Number of summary statistics :}] could range from several hundred to tens of thousands (scenario with several populations and combinatory "explosion") : how to select the \emph{\color{darkred} meaningful} ones?
-    \end{description}
-    Classical Methods for ABC ($k$-nn and local methods) doesn't cope very well with this situation.
-  \end{alertblock}
-\begin{block}{Our solution}
-  \cite{pudlo2015reliable} and \cite{raynal2016abc} proposed a novel approach, relying on \emph{Random Forests} to provide both model choice and parameter estimation methodologies
-\end{block}
-\end{column}
-
-\separatorcolumn
-
-\begin{column}{\colwidth}
-
-  \begin{block}{Second building block : Random Forests}
-    \begin{block}{CART}
-      Random Forests are based on a CART, \emph{Classification and Regression Trees}, algorithm \cite{breiman:etal:1984}.
-
-      \begin{wrapfigure}{l}{0.7\textwidth}
-        \begin{center}
-        \begin{tikzpicture}[scale=1.0, every node/.style={scale=1, minimum height=0.8cm}, thick]
-            \useasboundingbox (-1,-1) rectangle (11.5,11);
-            %\draw[very thin, gray] (0,0) grid[step=1] (10,10);
-            
-            \coordinate (c1) at (0,0);
-            \coordinate (c2) at (0,10);
-            \coordinate (c3) at (10,10);
-            \coordinate (c4) at (10,0);
-        
-            \coordinate (X1) at (5,0);
-            \coordinate (X2) at (0,5);
-        
-            \coordinate (cut1) at ($ (c1) + (0,4) $);
-            \coordinate (cut1_bis) at ($ (c4) + (0,4) $);
-        
-            \coordinate (cut2) at ($ (c1) + (6,0) $);
-            \coordinate (cut2_bis) at ($ (cut1) + (6,0) $);
-        
-            \coordinate (cut3) at ($ (cut1) + (3,0) $);
-            \coordinate (cut3_bis) at ($ (c2) + (3,0) $);
-            
-            \coordinate (cut4) at ($ (cut3) + (0,4) $);
-            \coordinate (cut4_bis) at ($ (cut1_bis) + (0,4) $);
-        
-            \coordinate (ret1) at (3,2);
-            \coordinate (ret2) at (8,2);
-            \coordinate (ret3) at (1.5,7);
-            \coordinate (ret4) at (6.5,6);
-            \coordinate (ret5) at (6.5,9);
-        
-            \coordinate (s1) at (0,4);
-            \coordinate (s2) at (6,0);
-            \coordinate (s3) at (3,0);
-            \coordinate (s4) at (0,8);
-        
-            \draw (c1) -- (c2) -- (c3) -- (c4) -- (c1);
-            \draw [color=lightblue,line width=1mm] (cut1) -- (cut1_bis);
-            \draw [color=darkyellow,line width=1mm] (cut2) -- (cut2_bis);
-            \draw [color=green!80!black,line width=1mm]  (cut3) -- (cut3_bis);
-            \draw [color=red,line width=1mm] (cut4) -- (cut4_bis);
-        
-            \draw (ret1) node {$\hat{y}_1$};
-            \draw (ret2) node {$\hat{y}_2$};
-            \draw (ret3) node {$\hat{y}_3$};
-            \draw (ret4) node {$\hat{y}_4$};
-            \draw (ret5) node {$\hat{y}_5$};
-        
-            \draw [color=lightblue] (s1) node[left] {$s_1$};
-            \draw [color=darkyellow] (s2) node[below] {$s_2$};
-            \draw [color=green!80!black] (s3) node[below] {$s_3$};
-            \draw [color=red] (s4) node[left] {$s_4$};
-            
-            \draw (s1) -- ++(-0.15,0);
-            \draw (s2) -- ++(0,-0.15);
-            \draw (s3) -- ++(0,-0.15);
-            \draw (s4) -- ++(-0.15,0);
-            
-            \draw (X1) node[below, minimum height = 2.5cm] {$X_1$};
-            \draw (X2) node[left, minimum width = 2.5cm] {$X_2$};
-        
-        \end{tikzpicture}%
-        \begin{tikzpicture}[scale=1.5,
-                edge from parent/.style={draw, thick, edge from parent path=
-                {(\tikzparentnode.south)--+(0,-1.5pt)-| (\tikzchildnode)}},
-                noeud/.style ={minimum size=1.2em, inner sep=4pt},
-                level 1/.style={sibling distance=3cm},
-                level 2/.style={sibling distance=2cm}]
-                \tikzset{level distance=65pt}
-                  \node [noeud,color=lightblue] {$X_2 \leq s_1$}
-                    child {node [noeud,color=darkyellow] {$X_1 \leq s_2$} 
-                        child {node [noeud] {$\hat{y}_1$} }
-                        child {node [noeud] {$\hat{y}_2$} }
-                    }
-                    child {node [noeud,color=green!80!black] {$X_1 \leq s_3$} 
-                        child {node [noeud] {$\hat{y}_3$} }
-                        child {node [noeud,color=red] {$X_2 \leq s_4$} 
-                            child {node [noeud] {$\hat{y}_4$} }
-                            child {node [noeud] {$\hat{y}_5$} }
-                        }
-                    };
-                \end{tikzpicture}
-        \end{center}
-        \caption{An example of CART and the associated partition of the two dimensional predictor space. Each splitting condition takes the form $X_j \leq s$ and the prediction at a leaf is denoted $\hat{y}_\ell$.}
-        \label{chap2:fig:CART-tree}
-        \end{wrapfigure}
-
-        A CART is a \emph{machine learning algorithm} whose principle is to partition the predictor space into disjoint subspaces, in an iterative manner, and each one is assigned a prediction value which will be used for test data falling in this subspace.\\
-
-        Once the partitioning is done, we have a binary tree structure which could predict outcomes from an input data, either classes or continuous values.
 
       \end{block}
 
-    \begin{block}{Random Forests}
+      \begin{alertblock}{DL/nbody coupling}
+      \end{alertblock}
 
-      \begin{figure}[ht]
-        \centering
-          \includesvg[width=35cm]{RF}
-      \caption{Random Forest}
-      \end{figure}
+    \end{column}
 
-      \begin{multicols}{2}
-        \textbf{Random Forests \cite{breiman:2001} are a three pronged extension of CART:}
-        \begin{itemize}
-          \item[\textbf{Ensemble method}] Training a \emph{set} of CART (not just one), and getting the majority vote (resp. mean) for classification (resp. regression)
-          \item[\textbf{Bootstrapping}] Training data is random sampled (with replacement) for \emph{each} tree
-          \item[\textbf{Feature bagging}] At each node of a growing tree, find the best split on a random subset of the features 
-        \end{itemize}
-        \columnbreak
-         \centering
-        \textbf{Advantages in an ABC setting : }
-        \justify
-        \begin{itemize}
-          \item robust to noise
-          \item (almost) free variable importance
-          \item free (out-of-bag) cross-validation procedure
-          \item easy parallelization
-          \item good scaling properties (samples and features)
-          \item classifier and regressor (both are used)
-        \end{itemize}  
-          
-      \end{multicols}
+    \separatorcolumn
+
+    \begin{column}{\colwidth}
+
+      \begin{block}{Fractality}
+
+      \end{block}
+
+      \begin{block}{Hamiltonian}
 
 
-    \end{block}
-  \end{block}
 
-  \begin{alertblock}{Computational challenges with ABC/Random Forests}
+      \end{block}
 
-    With ~100 000 lines and more than 10 000 summary statistics, each tree could reach over 1 gigabyte of memory size. Typically we need 500 or 1000 trees for good prediction performance, so, even with state of the art RF packages like \cite{wright2015ranger}, memory constraints are preventing completion of the training.
-    
-  \end{alertblock}
-  \begin{block}{A new implementation of Random Forest for ABC}
-    Since ABC procedures only use trained Random Forests on a known set of observations, we have altered the random forest training computation by using only a subset of in-memory trees at a time and accumulating the required outcomes (predictions and statistics). Memory footprint is vastly improved and there is no performance cost.
+      \begin{alertblock}{Perspectives}
 
-    \begin{figure}[ht]
-      \centering
-      \includesvg[width=35cm]{RF-optim}
-      \caption{Window of growing trees}
-    \end{figure}
+      \end{alertblock}
 
-    \justifying Ongoing project \realemph{LeafLitter} intends to pursue that line even further: for a growing tree, only encountered leaves are stored. Thus, the memory footprint of the trees becomes negligible, and their growing could finally be parallelized at full scale.
+
+
+    \end{column}
+
+    \separatorcolumn
+  \end{columns}
+
+  \begin{block}{\justifying References}
+    \nocite{*}
+    \footnotesize{\bibliographystyle{unsrt}\bibliography{poster}}
 
   \end{block}
-
-  
-
-\end{column}
-
-\separatorcolumn
-\end{columns}
-
-\begin{block}{\justifying References}
-  \nocite{*}
-  \footnotesize{\bibliographystyle{unsrt}\bibliography{poster}}
-
-\end{block}
 
 \end{frame}
 
